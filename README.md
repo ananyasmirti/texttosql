@@ -107,6 +107,26 @@ The LLM is treated as an untrusted generator. Defense in depth:
    note in the schema description warning the model not to assume this
    column needs no further aggregation.
 
+## Deployment
+
+Backend (Render) + frontend (Streamlit Community Cloud) as two separate
+services, connected by one env var:
+
+1. **Backend on Render**: New + -> Blueprint, point at this repo (uses
+   `render.yaml`). Set the `GROQ_API_KEY` secret in the Render dashboard
+   when prompted. `render.yaml`'s build step runs `db/seed.py` so the
+   SQLite file is regenerated fresh on every deploy -- it's not committed
+   (deterministic synthetic data, no reason to version the binary). Copy
+   the resulting service URL (`https://<name>.onrender.com`).
+2. **Frontend on Streamlit Community Cloud**: New app -> this repo,
+   main file path `frontend/app.py`. In App settings -> Secrets, add:
+   ```toml
+   BACKEND_URL = "https://<your-render-service>.onrender.com"
+   ```
+3. Free tier on both sleeps after inactivity -- hit the Render URL a
+   minute or two before a live demo to wake it, since the first request
+   after sleep has a cold-start delay.
+
 ## Trade-offs
 
 - **SQLite over Postgres**: zero infra, fast to stand up for a demo.
