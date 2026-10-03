@@ -36,6 +36,26 @@ MUTED_INK = "#898781"
 
 st.set_page_config(page_title="Finance Dashboard", page_icon="📊", layout="wide")
 
+# Targeted, minimal CSS: tighten Streamlit's default top whitespace and give
+# the KPI tiles a deliberate card treatment (thin border, one consistent
+# corner-radius -- no shadow, no gradient) since they're the one place on
+# this page where elevation communicates real hierarchy (headline numbers).
+st.markdown(
+    """
+    <style>
+    .block-container { padding-top: 2rem; padding-bottom: 2rem; }
+    div[data-testid="stMetric"] {
+        background: #f2f1ed;
+        border: 1px solid rgba(11,11,11,0.08);
+        border-radius: 10px;
+        padding: 1rem 1.1rem;
+    }
+    div[data-testid="stMetricLabel"] { color: #52514e; }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 
 @st.cache_data(ttl=60)
 def load_metrics() -> pd.DataFrame:
